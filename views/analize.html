@@ -4,15 +4,18 @@
     
 </head>
 <body>
-    <div class="container-xxl bg-dark mt-5">
+    <div class="container-xxl bg-dark mt-5 rounded rounded-5">
         <div class="row">
             <div class="col-md-2 align-self-center m-3 text-center">
-                <button type="button" class="btn btn-outline-primary btn-lg fs-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <button type="button" class="btn btn-outline-primary btn-lg fs-3 mb-4 w-100" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <i class="far fa-plus-square"></i><br>New Activity
                 </button>
+                <button type="button" id='testing_btn' class="btn btn-outline-primary btn-lg fs-3 w-100">
+                    <i class="far fa-plus-square"></i><br>Add Node
+                </button>
             </div>
-            <div class="col align-self-end bg-light m-3">
-                <div id="canvas_cont">
+            <div class="col align-self-end bg-light m-3 rounded rounded-5">
+                <div class='rounded rounded-5' id="canvas_cont">
 
                 </div>
             </div>
@@ -33,7 +36,7 @@
             <div class="table-wrapper-scroll-y my-custom-scrollbar">
             <!-- Table -->
             <table class="table custom-scrollable">
-                <thead>
+                <thead class="">
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Activity</th>
@@ -72,13 +75,13 @@
                       <input type="number" id='input_time' class="form-control" placeholder="Time" aria-label="Time"  autocomplete="off">
                     </div>
                   </div>
-                <button type="" class="btn btn-primary" onclick="list_activities()">Submit</button>
+                <button type="button" class="btn btn-primary" onclick="return list_activities()">Submit</button>
               </form>
 
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-primary" id="load_activities">Load Activities</button>
         </div>
       </div>
     </div>

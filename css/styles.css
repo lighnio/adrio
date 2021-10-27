@@ -15,10 +15,10 @@
             display: block;
             }
 
-/* Board Canva Container */
+/* Board Canva Containers */
+
 #canvas_cont{
-    width: 100%;
-    margin: 15px 0 15px 0;
-    background-color: aquamarine;
+    margin: 10px 0 10px 0;
     height: 75vh;
+    border: 2px #000 solid;
 }
