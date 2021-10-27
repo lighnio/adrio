@@ -1,0 +1,89 @@
+<!-- Board -->
+<html lang="en">
+<head>
+    
+</head>
+<body>
+    <div class="container-xxl bg-dark mt-5">
+        <div class="row">
+            <div class="col-md-2 align-self-center m-3 text-center">
+                <button type="button" class="btn btn-outline-primary btn-lg fs-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <i class="far fa-plus-square"></i><br>New Activity
+                </button>
+            </div>
+            <div class="col align-self-end bg-light m-3">
+                <div id="canvas_cont">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+  
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Activities</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <!-- Table -->
+            <table class="table custom-scrollable">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Activity</th>
+                    <th scope="col">Precedence</th>
+                    <th scope="col">Time</th>
+                  </tr>
+                </thead>
+                <tbody id='list_activities'>
+
+                    <!-- <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                    </tr> -->
+                    
+                </tbody>
+              </table>
+
+            </div>
+            <!-- Table End -->
+            <hr class="dropdown-divider my-5">
+            <!-- Form -->
+            <h5>Add Activity</h5>
+            <hr>
+            <div id="liveAlertPlaceholder"></div>
+            <form>
+                <div class="row mb-3">
+                    <div class="col">
+                      <input type="text" id='input_name' class="form-control" placeholder="Activity Name" aria-label="Activity Name" autocomplete="off">
+                    </div>
+                    <div class="col">
+                      <input type="text" id='input_precedence' class="form-control" placeholder="Precedence" aria-label="Precedence"  autocomplete="off" disabled>
+                    </div>
+                    <div class="col">
+                      <input type="number" id='input_time' class="form-control" placeholder="Time" aria-label="Time"  autocomplete="off">
+                    </div>
+                  </div>
+                <button type="" class="btn btn-primary" onclick="list_activities()">Submit</button>
+              </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+<!-- End Board -->
