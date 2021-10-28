@@ -88,7 +88,7 @@ window.addEventListener("load", function () {
       // evt.target.connectedEdges().animate({
       //   style: { lineColor: "red" },
       // });
-      console.log(evt.target.size());
+      console.log(evt.target.data());
     });
 
   }
@@ -108,7 +108,7 @@ window.addEventListener("load", function () {
               {
                 group: "nodes",
                 data: {
-                  id: `Nodo ${activities[a].id}`,
+                  id: `Nodo${activities[a].id}`,
                   name: activities[a].name,
                   precedence: activities[a].precedence,
                   time: activities[a].time,
@@ -145,6 +145,24 @@ window.addEventListener("load", function () {
                 ]);
               }
             }
+            
+            // console.log('a: ', typeof a);
+            // console.log('activities: ', typeof activities.length);
+            if( a == activities.length-1){
+              console.log(cy.elements(`node[name = "${activities[a].name}"]`).data());
+              console.log('----------------------');
+              console.log('All Leaves');
+              // console.log(cy.nodes().leaves().length);
+              for(let n = 0; n <= cy.nodes().leaves().length-1; n++){
+                // try {
+                  if (cy.nodes().leaves()[n].id() != cy.elements(`node[name = "${activities[a].name}"]`).id()) {
+                    console.log(cy.nodes().leaves()[n].data());
+                  }
+                // } catch (e) {
+                  // console.error(e);
+                // }
+              }
+            }
           }
           var layout = cy.makeLayout({ name: "dagre", rankDir: "LR" });
           layout.run();
@@ -160,9 +178,18 @@ window.addEventListener("load", function () {
   setTimeout(function () {
     const see_nodes = document.getElementById("see_nodes");
     see_nodes.addEventListener("mousedown", function () {
-      // console.log(cy.filter('[group != "edges"]').length);
-      console.log(cy.elements());
-    });
+    //   // console.log(cy.filter('[group != "edges"]').length);
+    //   console.log(cy.elements());
+    
+    var dfs = cy.elements().aStar({
+      root: '#Nodo0',
+      goal: '#Nodo3',
+      directed: true
+    })
+    dfs.path.select()
+    console.log(dfs.distance)
+  });
+
   }, 1000);
 });
 // Modal
