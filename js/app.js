@@ -43,6 +43,17 @@ window.addEventListener("load", function () {
     //Cytoscape initializations
     cy = cytoscape({
       container: document.getElementById("canvas_cont"), // Container to render
+      // elements: [ // list of graph elements to start with
+      //   { // node a
+      //     data: { id: 'a' }
+      //   },
+      //   { // node b
+      //     data: { id: 'b' }
+      //   },
+      //   { // edge ab
+      //     data: { id: 'ab', source: 'a', target: 'b' }
+      //   }
+      // ],
       style: [
         //Stylesheet for graph
         {
@@ -56,7 +67,7 @@ window.addEventListener("load", function () {
         {
           selector: "edge",
           style: {
-            width: 10,
+            width: 4,
             "line-color": "#030",
             "target-arrow-color": "#003",
             "target-arrow-shape": "triangle",
@@ -65,91 +76,99 @@ window.addEventListener("load", function () {
         },
       ],
       layout: {
-        name: 'breadthfirst'
+        name: "dagre",
+        rankDir: "LR",
       },
       zoom: 0.5,
       minZoom: 0.6,
       maxZoom: 2,
     });
-    // add
+
+    cy.on("tap", "node", (evt) => {
+      // evt.target.connectedEdges().animate({
+      //   style: { lineColor: "red" },
+      // });
+      console.log(evt.target.size());
+    });
+
   }
 
   //adding functions
   setTimeout(function () {
-    const load_on_canvas = document.getElementById('load_activities');
-    load_on_canvas.addEventListener('mousedown', function () {
-        if (activities.length > 0){
-          load_on_canvas.setAttribute('data-bs-dismiss', 'modal');
+    const load_on_canvas = document.getElementById("load_activities");
+    load_on_canvas.addEventListener(
+      "mousedown",
+      function () {
+        if (activities.length > 0) {
+          load_on_canvas.setAttribute("data-bs-dismiss", "modal");
           // let counter = cy.elements('node[name != ""]').length;
-  
-          for(let a in activities){  
+
+          for (let a in activities) {
             cy.add([
               {
                 group: "nodes",
-                data: { 
+                data: {
                   id: `Nodo ${activities[a].id}`,
                   name: activities[a].name,
                   precedence: activities[a].precedence,
-                  time: activities[a].time
-                }
-              }
+                  time: activities[a].time,
+                },
+              },
             ]);
 
-            if(activities[a].precedence !== null){
-              const prec_id = cy.elements(`node[name = "${activities[a].precedence}"]`).data('id');
-              const this_id = cy.elements(`node[name = "${activities[a].name}"]`).data('id');
-              // console.log(`${activities[a].name}: `,prec_id);
-              cy.add([
-                {
-                  group: 'edges',
-                  data:{
-                    id: `${activities[a].id-1} to ${activities[a]}`,
-                    source: `${prec_id}`,
-                    target: `${this_id}`
-                  }
-                }
-              ]);
+            if (activities[a].precedence) {
+              // Calculating Edges Number
+              for (let e in activities[a].precedence) {
+                // console.log(`precedende for ${activities[a].name}`, activities[a].precedence[e]);
+                const prec_id = cy
+                  .elements(`node[name = "${activities[a].precedence[e]}"]`)
+                  .data("id");
+                const prec_name = cy
+                  .elements(`node[name = "${activities[a].precedence[e]}"]`)
+                  .data("name");
+                const this_id = cy
+                  .elements(`node[name = "${activities[a].name}"]`)
+                  .data("id");
+                const this_name = cy
+                  .elements(`node[name = "${activities[a].name}"]`)
+                  .data("name");
+                // console.log(`${activities[a].name}: `,prec_id);
+                cy.add([
+                  {
+                    group: "edges",
+                    data: {
+                      id: `${prec_name} to ${this_name}`,
+                      source: `${prec_id}`,
+                      target: `${this_id}`,
+                    },
+                  },
+                ]);
+              }
             }
           }
-          var layout = cy.makeLayout({ name: 'breadthfirst' });
+          var layout = cy.makeLayout({ name: "dagre", rankDir: "LR" });
           layout.run();
           cy.fit();
-
-        // cy.add([
-        //   {
-        //     group: "nodes",
-        //     data: { id: `Nodo ${counter+1}` },
-        //     position: { x: 350, y: 200 },
-        //   },
-        // ]);
-        // cy.fit();
         } else {
-          alert('Not activities yet.', 'danger');
+          alert("Not activities yet.", "danger");
         }
-    }, 1000);
-  })
+      },
+      1000
+    );
+  });
+
+  setTimeout(function () {
+    const see_nodes = document.getElementById("see_nodes");
+    see_nodes.addEventListener("mousedown", function () {
+      // console.log(cy.filter('[group != "edges"]').length);
+      console.log(cy.elements());
+    });
+  }, 1000);
 });
 // Modal
 // Activities
 
-// id: activities.length,
-//   name: td_name.innerHTML,
-//   precedence: activities.length ? td_prec.innerHTML : null,
-//   time: td_time.innerHTML,
-var activities = [
-  // {
-  //   id: 0,
-  //   name: 'A',
-  //   precedence: null,
-  //   time: 12
-  // },
-  // {
-  //   id: 0,
-  //   name: '',
-  //   precedence: null,
-  //   time: 12
-  // },
-];
+var activities = [];
 
 // window.onload = function () {
 function list_activities() {
@@ -186,13 +205,6 @@ function list_activities() {
     td_time.innerHTML = inp_time.value;
     inp_time.value = "";
 
-    // <!-- <tr>
-    //                         <th scope="row">1</th>
-    //                         <td>Mark</td>
-    //                         <td>Otto</td>
-    //                         <td>@mdo</td>
-    //                     </tr> -->
-
     //add and listing
 
     tr.appendChild(th);
@@ -206,7 +218,11 @@ function list_activities() {
     activities.push({
       id: activities.length,
       name: td_name.innerHTML,
-      precedence: activities.length ? td_prec.innerHTML : null,
+      precedence: activities.length
+        ? td_prec.innerHTML.split(",").map(function (value) {
+            return value.trim();
+          })
+        : null,
       time: td_time.innerHTML,
     });
 
@@ -216,22 +232,3 @@ function list_activities() {
   }
 }
 // }
-
-// {
-
-//     list: ['a', 'b', 'c'],
-//     addActivity: function(name, predecessor = null, time) {
-//         this.list.push({
-//             name: name,
-//             predecessor: predecessor,
-//             time: time
-//         })
-//     },
-//     getActivities: function () {
-//         return this.list;
-//     }
-// }
-
-/* ******** */
-/*   Nodes  */
-/* ******** */
