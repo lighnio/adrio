@@ -96,6 +96,9 @@ window.addEventListener("load", function () {
   //adding functions
   setTimeout(function () {
     const load_on_canvas = document.getElementById("load_activities");
+
+    if(load_on_canvas == null) location.reload(true);
+
     load_on_canvas.addEventListener(
       "mousedown",
       function () {
@@ -108,7 +111,7 @@ window.addEventListener("load", function () {
               {
                 group: "nodes",
                 data: {
-                  id: `Nodo${activities[a].id}`,
+                  id: `Nodo_${activities[a].id}`,
                   name: activities[a].name,
                   precedence: activities[a].precedence,
                   time: activities[a].time,
@@ -152,15 +155,31 @@ window.addEventListener("load", function () {
               console.log(cy.elements(`node[name = "${activities[a].name}"]`).data());
               console.log('----------------------');
               console.log('All Leaves');
-              // console.log(cy.nodes().leaves().length);
-              for(let n = 0; n <= cy.nodes().leaves().length-1; n++){
-                // try {
-                  if (cy.nodes().leaves()[n].id() != cy.elements(`node[name = "${activities[a].name}"]`).id()) {
-                    console.log(cy.nodes().leaves()[n].data());
+              let last_node = cy.elements(`node[name = "${activities[a].name}"]`);
+              let leaves = cy.nodes().leaves();
+              // console.log(`leaves: ${cy.nodes().leaves().length}`);
+              for(let n = 0; n < leaves.length; n++){
+                  let now_node = leaves[n];
+                  // console.log(`nodoactual: ${leaves[n].data('id')}`);
+                  // console.log(`iteracion: ${n}`);
+                  if (now_node.id() != last_node.id()) {
+                    // console.log(cy.nodes().leaves()[n].data());
+
+                    // console.log('Extra Edges');
+                    // console.log(`id: ${now_node.data('id')} to ${last_node.data('id')}`);
+                    // console.log(`source: ${now_node.data('id')}`);
+                    // console.log(`target: ${last_node.data('id')}`);
+                    cy.add([
+                      {
+                        group: "edges",
+                        data: {
+                          id: `${now_node.id()} to ${last_node.id()}`,
+                          source: `${now_node.id()}`,
+                          target: `${last_node.id()}`,
+                        },
+                      },
+                    ]);
                   }
-                // } catch (e) {
-                  // console.error(e);
-                // }
               }
             }
           }
@@ -168,7 +187,7 @@ window.addEventListener("load", function () {
           layout.run();
           cy.fit();
         } else {
-          alert("Not activities yet.", "danger");
+          alert("No activities yet.", "danger");
         }
       },
       1000
@@ -181,16 +200,16 @@ window.addEventListener("load", function () {
     //   // console.log(cy.filter('[group != "edges"]').length);
     //   console.log(cy.elements());
     
-    var dfs = cy.elements().aStar({
-      root: '#Nodo0',
-      goal: '#Nodo3',
-      directed: true
-    })
-    dfs.path.select()
-    console.log(dfs.distance)
+    // var dfs = cy.elements().aStar({
+    //   root: '#Nodo0',
+    //   goal: '#Nodo3',
+    //   directed: true
+    // })
+    // dfs.path.select()
+    // console.log(dfs.distance)
   });
 
-  }, 1000);
+  }, 3000);
 });
 // Modal
 // Activities
