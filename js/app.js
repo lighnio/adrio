@@ -59,7 +59,7 @@ window.addEventListener("load", function () {
         {
           selector: "node",
           style: {
-            "background-color": "#984",
+            // "background-color": "#984",
             label: "data(name)",
           },
         },
@@ -68,10 +68,10 @@ window.addEventListener("load", function () {
           selector: "edge",
           style: {
             width: 4,
-            "line-color": "#030",
-            "target-arrow-color": "#003",
-            "target-arrow-shape": "triangle",
+            // "line-color": "#030",
+            // "target-arrow-color": "#003",
             "curve-style": "bezier",
+            "target-arrow-shape": "triangle",
           },
         },
       ],
@@ -99,9 +99,64 @@ window.addEventListener("load", function () {
 
     if(load_on_canvas == null) location.reload(true);
 
+    //Global in function
+    var edge_id;
+
+    function createTippy(id, node = 'pre') {
+      let ele = cy.getElementById(id);
+      // console.log('Ele: ', ele.data());
+      // console.log('Source: ', cy.elements(`node[id = "${ele.data().source}"]`).data().name);
+      // console.log('Source Time: ', cy.elements(`node[id = "${ele.data().source}"]`).data().time);
+      // console.log('Target: ', cy.elements(`node[id = "${ele.data().target}"]`).data().name);
+      // console.log('Target Time: ', cy.elements(`node[id = "${ele.data().target}"]`).data().time);
+
+      function makeTippys(ele, node = 'pre') {
+        var ref = ele.popperRef();
+
+        // Placeholder for Tippy
+        var dummyDomEl = document.createElement('div');
+
+        
+        var tip = tippy(dummyDomEl, {
+          getReferenceClientRect: ref.getBoundingClientRect,
+          trigger: 'manual', //Mandatory
+          //dom element inside tippy
+          content: function () {
+            // Posibble upgrade to performance
+            let divCont = document.createElement('div');
+            // let bold = document.createElement('div');
+            // let info = cy.elements(`node[id = "${ele.data().source}"]`).data().name +
+            // ' Time: ' + cy.elements(`node[id = "${ele.data().source}"]`).data().time;
+            // console.log(ele.data());
+            let info = (node == 'pre' ? (cy.elements(`node[id = "${ele.data().source}"]`).data().name +
+            ' Time: ' + cy.elements(`node[id = "${ele.data().source}"]`).data().time)
+            :
+            (cy.elements(`node[id = "${ele.data().target}"]`).data().name +
+            ' Time: ' + cy.elements(`node[id = "${ele.data().target}"]`).data().time)
+            )
+            divCont.innerHTML = info
+            return divCont;
+          },
+          // Preferences
+          arrow: true,
+          placement: (node == 'pre' ? 'bottom' : 'top'),
+          hideOnClick: false,
+          sticky: 'reference',
+
+          // If interactive 
+          interactive: true,
+          appendTo: document.body
+        });
+        return tip;
+      };
+
+      return makeTippys(ele, node);
+    }
+
     load_on_canvas.addEventListener(
       "mousedown",
       function () {
+        cy.elements().remove();
         if (activities.length > 0) {
           load_on_canvas.setAttribute("data-bs-dismiss", "modal");
           // let counter = cy.elements('node[name != ""]').length;
@@ -136,25 +191,28 @@ window.addEventListener("load", function () {
                   .elements(`node[name = "${activities[a].name}"]`)
                   .data("name");
                 // console.log(`${activities[a].name}: `,prec_id);
+                edge_id = `${prec_name} to ${this_name}`;
                 cy.add([
                   {
                     group: "edges",
                     data: {
-                      id: `${prec_name} to ${this_name}`,
+                      id: edge_id,
                       source: `${prec_id}`,
                       target: `${this_id}`,
                     },
                   },
                 ]);
+                createTippy(edge_id).show();
+                createTippy(edge_id, 'top').show();
               }
             }
             
             // console.log('a: ', typeof a);
             // console.log('activities: ', typeof activities.length);
             if( a == activities.length-1){
-              console.log(cy.elements(`node[name = "${activities[a].name}"]`).data());
-              console.log('----------------------');
-              console.log('All Leaves');
+              // console.log(cy.elements(`node[name = "${activities[a].name}"]`).data());
+              // console.log('----------------------');
+              // console.log('All Leaves');
               let last_node = cy.elements(`node[name = "${activities[a].name}"]`);
               let leaves = cy.nodes().leaves();
               // console.log(`leaves: ${cy.nodes().leaves().length}`);
@@ -169,16 +227,19 @@ window.addEventListener("load", function () {
                     // console.log(`id: ${now_node.data('id')} to ${last_node.data('id')}`);
                     // console.log(`source: ${now_node.data('id')}`);
                     // console.log(`target: ${last_node.data('id')}`);
+                    edge_id = `${now_node.id()} to ${last_node.id()}`;
                     cy.add([
                       {
                         group: "edges",
                         data: {
-                          id: `${now_node.id()} to ${last_node.id()}`,
+                          id: edge_id,
                           source: `${now_node.id()}`,
                           target: `${last_node.id()}`,
                         },
                       },
                     ]);
+                    createTippy(edge_id).show();
+                    createTippy(edge_id, 'top').show();
                   }
               }
             }
@@ -186,6 +247,7 @@ window.addEventListener("load", function () {
           var layout = cy.makeLayout({ name: "dagre", rankDir: "LR" });
           layout.run();
           cy.fit();
+          document.getElementById('cal_route').removeAttribute('disabled');
         } else {
           alert("No activities yet.", "danger");
         }
@@ -195,7 +257,7 @@ window.addEventListener("load", function () {
   });
 
   setTimeout(function () {
-    const see_nodes = document.getElementById("see_nodes");
+    const see_nodes = document.getElementById("cal_route");
     see_nodes.addEventListener("mousedown", function () {
     //   // console.log(cy.filter('[group != "edges"]').length);
     //   console.log(cy.elements());
