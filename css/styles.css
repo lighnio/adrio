@@ -22,3 +22,20 @@
     height: 75vh;
     border: 2px #000 solid;
 }
+
+/* About Page */
+
+.coming{
+    width: 100%;
+    height: auto;
+    margin: auto;
+    margin-top: 15%;
+    text-align: center;
+}
+
+
+.coming-text{
+    width: auto;
+    font-size: 13vh;
+    
+}

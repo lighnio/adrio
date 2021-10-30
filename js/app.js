@@ -80,7 +80,7 @@ window.addEventListener("load", function () {
         rankDir: "LR",
       },
       zoom: 0.5,
-      minZoom: 0.6,
+      minZoom: 0.4  ,
       maxZoom: 2,
     });
 
@@ -97,7 +97,7 @@ window.addEventListener("load", function () {
   setTimeout(function () {
     const load_on_canvas = document.getElementById("load_activities");
 
-    if(load_on_canvas == null) location.reload(true);
+    if(load_on_canvas == null && location.hash != "#about") location.reload(true);
 
     //Global in function
     var edge_id;
@@ -283,7 +283,7 @@ window.addEventListener("load", function () {
     let paths = [];
     
     for(let i = 0; i < allPaths.length; i++){
-      console.log('Path: ', i);
+      // console.log('Path: ', i);
       let counter = 0;
       for(let j = 0; j < allPaths[i].length; j++){
         if(j % 2 == 0){
@@ -298,8 +298,8 @@ window.addEventListener("load", function () {
         path: allPaths[i]
       });
     }
-    console.log('Paths: ');
-    console.log(paths);
+    // console.log('Paths: ');
+    // console.log(paths);
 
     //Sorting
     for(var a = 0; a < paths.length; a++){
@@ -312,7 +312,7 @@ window.addEventListener("load", function () {
       }
     }
     // Possible issue with route, not use last space
-    paths[paths.length - 2].path.select();
+    if(paths.length > 2) paths[paths.length - 2].path.select();
     
     // var dfs = cy.elements().aStar({
     //   root: '#Nodo_0',
