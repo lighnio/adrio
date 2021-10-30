@@ -129,10 +129,10 @@ window.addEventListener("load", function () {
             // ' Time: ' + cy.elements(`node[id = "${ele.data().source}"]`).data().time;
             // console.log(ele.data());
             let info = (node == 'pre' ? (cy.elements(`node[id = "${ele.data().source}"]`).data().name +
-            ' Time: ' + cy.elements(`node[id = "${ele.data().source}"]`).data().time)
+            ': ' + cy.elements(`node[id = "${ele.data().source}"]`).data().time)
             :
             (cy.elements(`node[id = "${ele.data().target}"]`).data().name +
-            ' Time: ' + cy.elements(`node[id = "${ele.data().target}"]`).data().time)
+            ': ' + cy.elements(`node[id = "${ele.data().target}"]`).data().time)
             )
             divCont.innerHTML = info
             return divCont;
@@ -261,13 +261,65 @@ window.addEventListener("load", function () {
     see_nodes.addEventListener("mousedown", function () {
     //   // console.log(cy.filter('[group != "edges"]').length);
     //   console.log(cy.elements());
+
+    // let allPaths = cy.elements().cytoscapeAllPaths(/* {maxPaths: 2, rootIds: ['g', 'e']} */);
+
+    // // Usage example: display each path at regular intervals
+    // let maxTimes = allPaths.length;
+    // let currentTimes = 0;
+    // let selectedEles;
+    // let interval = setInterval(() => {
+    //   if (currentTimes === maxTimes) {
+    //     currentTimes = 0;
+    //   } else {
+    //     if (selectedEles) selectedEles.unselect();
+    //     selectedEles = allPaths[currentTimes];
+    //     selectedEles.select();
+    //     currentTimes++;
+    //   }
+    // }, 1000);
+
+    let allPaths = cy.elements().cytoscapeAllPaths();
+    let paths = [];
+    
+    for(let i = 0; i < allPaths.length; i++){
+      console.log('Path: ', i);
+      let counter = 0;
+      for(let j = 0; j < allPaths[i].length; j++){
+        if(j % 2 == 0){
+          // console.log(allPaths[i][j].data('id'));
+          // paths.push(allPaths[i][j].data('id'));
+          // console.log('allPathsTime: ',allPaths[i][j].data('time'));
+          counter = counter + parseInt(allPaths[i][j].data('time'));
+        }
+      }
+      paths.push({
+        sum: counter,
+        path: allPaths[i]
+      });
+    }
+    console.log('Paths: ');
+    console.log(paths);
+
+    //Sorting
+    for(var a = 0; a < paths.length; a++){
+      for (var b = 0; b < (paths.length - a - 1); b++) {
+        if(paths[b].sum > paths[b+1].sum){
+          var temp = paths[b];
+          paths[b] = paths[b+1];
+          paths[b+1] = temp;
+        }
+      }
+    }
+    // Possible issue with route, not use last space
+    paths[paths.length - 2].path.select();
     
     // var dfs = cy.elements().aStar({
-    //   root: '#Nodo0',
-    //   goal: '#Nodo3',
+    //   root: '#Nodo_0',
+    //   goal: '#Nodo_3',
     //   directed: true
     // })
-    // dfs.path.select()
+      
     // console.log(dfs.distance)
   });
 
