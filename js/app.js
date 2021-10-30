@@ -13,7 +13,7 @@
 })();
 
 // General Simple Functions
-function alert(message, type) {
+function customAlert(message, type) {
   // Alert
   var alertPlaceholder = document.getElementById("liveAlertPlaceholder");
   var wrapper = document.createElement("div");
@@ -249,7 +249,7 @@ window.addEventListener("load", function () {
           cy.fit();
           document.getElementById('cal_route').removeAttribute('disabled');
         } else {
-          alert("No activities yet.", "danger");
+          customAlert("No activities yet.", "danger");
         }
       },
       1000
@@ -298,7 +298,7 @@ window.addEventListener("load", function () {
         path: allPaths[i]
       });
     }
-    // console.log('Paths: ');
+    console.log('Paths: ');
     // console.log(paths);
 
     //Sorting
@@ -312,7 +312,17 @@ window.addEventListener("load", function () {
       }
     }
     // Possible issue with route, not use last space
-    if(paths.length > 2) paths[paths.length - 2].path.select();
+    // if(paths.length > 2) {
+    //   alert('Total Time: ', paths[paths.length - 2].sum);
+    //   console.log(paths[paths.length - 2].sum);
+    //   paths[paths.length - 2].path.select();
+    // } else 
+    let t = paths[paths.length - 2].sum;
+    if(paths.length > 1){
+      alert(`Total Time: ${t}`)
+      paths[paths.length - 2].path.select();
+      console.log(paths[paths.length - 2].sum);
+    }
     
     // var dfs = cy.elements().aStar({
     //   root: '#Nodo_0',
@@ -388,7 +398,7 @@ function list_activities() {
 
     if (activities.length) inp_prec.removeAttribute("disabled");
   } else {
-    alert("Error, empty field", "danger");
+    customAlert("Error, empty field", "danger");
   }
 }
 // }
